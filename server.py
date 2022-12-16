@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, request
 from dbfunction import DatabaseConnection, EvaluationFunction
 from sns_sub import SnsWrapper
@@ -40,7 +41,7 @@ def update_rating(search_key, update_statement):
         search_engine.evaluate(search_key, new_evaluation)
         # SNS
         # email_address = 'jt3302@columbia.edu'
-        email_address = requests.get(master_url+"/getEmail").content
+        email_address = requests.get(master_url+"/getEmail").content.decode('UTF-8')
         msg = "Hello! Thanks for evaluating the course. Have a good one!."
         sns_wrapper = SnsWrapper()
         sns_wrapper.subscribe('email', email_address)
