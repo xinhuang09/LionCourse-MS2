@@ -1,5 +1,9 @@
 from flask import Flask, request
 from dbfunction import DatabaseConnection, EvaluationFunction
+from sns_sub import SnsWrapper
+import logging
+import boto3
+from botocore.exceptions import ClientError
 
 host = 'lioncoursedatabase.c5zzynku9kw4.us-east-2.rds.amazonaws.com'
 database_user_id = 'LionCourseAdmin'
@@ -32,6 +36,12 @@ def update_rating(search_key, update_statement):
         new_evaluation = [int(score) for score in new_evaluation]
         search_engine = EvaluationFunction(default_scheme, cur, conn)
         search_engine.evaluate(search_key, new_evaluation)
+        # SNS
+        email_address = 'jt3302@columbia.edu'
+        msg = "Hello! Thanks for evaluating the course. Have a good one!."
+        sns_wrapper = SnsWrapper()
+        sns_wrapper.subscribe('email', email_address)
+        sns_wrapper.publish_msg(msg)
         return 'Update successed.'
     except:
         return 'Update failed.'
