@@ -15,6 +15,8 @@ def create_cursor(host = host, database_user_id = database_user_id, database_use
     cur, conn = db.connection()
     return cur, conn
 
+master_url = 'http://127.0.0.1:5000'
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Rivendell'
 
@@ -37,7 +39,8 @@ def update_rating(search_key, update_statement):
         search_engine = EvaluationFunction(default_scheme, cur, conn)
         search_engine.evaluate(search_key, new_evaluation)
         # SNS
-        email_address = 'jt3302@columbia.edu'
+        # email_address = 'jt3302@columbia.edu'
+        email_address = requests.get(master_url+"/getEmail").content
         msg = "Hello! Thanks for evaluating the course. Have a good one!."
         sns_wrapper = SnsWrapper()
         sns_wrapper.subscribe('email', email_address)
